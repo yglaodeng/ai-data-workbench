@@ -1,0 +1,11 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+data/*.json
+data/workspaces/
+!data/.gitkeep
+*.log
+.env
+.env.*
+版本与恢复/

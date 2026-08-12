@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 数据工作台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%233157d5'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='25' font-family='Arial' font-weight='700' fill='white'%3EAI%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/styles.css?v=20260809-1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="AI 数据工作台首页"><span class="brand-mark">AI</span><span>AI 数据工作台</span></a>
+      <div class="topbar-actions">
+        <button id="sidebar-restore" class="sidebar-restore" type="button" aria-label="展开功能导航" hidden><span aria-hidden="true">›</span>展开功能导航</button>
+        <span class="status"><i></i> 本地安全模式</span>
+      </div>
+    </header>
+
+    <div id="app-layout" class="app-layout">
+      <aside id="sidebar" class="sidebar" aria-label="功能导航">
+        <div class="sidebar-heading"><strong>功能</strong><button id="sidebar-collapse" class="sidebar-collapse" type="button" aria-label="折叠功能导航">‹</button></div>
+        <nav>
+          <a href="#start-view" aria-current="page"><span>01</span>开始处理</a>
+          <a href="#results-view"><span>02</span>我的结果</a>
+          <a href="#collaboration-record-panel"><span>03</span>任务留痕</a>
+        </nav>
+        <p>原始文件只读。所有结果均为可查询、可下载的派生版本。</p>
+      </aside>
+
+      <main>
+        <div id="start-view" class="app-view is-active" data-app-view>
+          <section class="hero">
+            <h1>开始处理数据</h1>
+            <p>上传 Excel 或 CSV，告诉我们想得到什么结果，一键生成。</p>
+          </section>
+
+          <section id="free-workspace-panel" class="free-workspace-panel" data-nav-section>
+            <ol id="workspace-progress" class="workspace-progress" aria-label="处理进度" aria-live="polite">
+              <li class="is-active"><span>1</span><strong>添加文件</strong></li>
+              <li><span>2</span><strong>描述结果</strong></li>
+              <li><span>3</span><strong>生成</strong></li>
+            </ol>
+
+            <div class="one-click-workspace">
+              <section class="data-source-column" aria-labelledby="data-source-title">
+                <div class="column-heading"><h2 id="data-source-title">数据源</h2><p>上传文件作为本次处理的数据来源</p></div>
+                <input id="workspace-files" class="visually-hidden" type="file" accept=".xlsx,.csv,.tsv,.json" multiple />
+                <label id="workspace-drop-zone" class="workspace-drop-zone" for="workspace-files">
+                  <span class="upload-mark" aria-hidden="true">+</span>
+                  <strong>拖拽文件到此处，或点击上传</strong>
+                  <small>支持 Excel、CSV，最多 5 个，单文件不超过 20 MB</small>
+                </label>
+                <div class="workspace-file-information">
+                  <div class="file-information-heading"><strong>文件信息</strong><span id="workspace-file-count">未上传</span></div>
+                  <dl id="workspace-file-summary">
+                    <div><dt>文件名称</dt><dd>-</dd></div>
+                    <div><dt>文件数量</dt><dd>-</dd></div>
+                    <div><dt>数据状态</dt><dd>等待添加文件</dd></div>
+                  </dl>
+                  <p>原始文件仅用于读取，不会被修改或覆盖。</p>
+                </div>
+              </section>
+
+              <section class="task-column" aria-labelledby="task-title">
+                <div class="column-heading"><h2 id="task-title">任务</h2><p>说明最终要求，系统会自动完成中间处理</p></div>
+                <label for="workspace-instructions">告诉我你想得到什么结果</label>
+                <textarea id="workspace-instructions" placeholder="例如：清理重复数据，计算每个产品的销售额，按地区汇总并排序，标出异常数据。"></textarea>
+                <div class="request-examples" aria-label="需求示例">
+                  <span>可以这样说：</span>
+                  <button type="button" data-workspace-example="按月份汇总销售额，计算环比并按降序排列。">按月份汇总销售额</button>
+                  <button type="button" data-workspace-example="筛选最近30天的高价值客户明细，并标出异常订单。">筛选高价值客户</button>
+                </div>
+                <fieldset class="output-choice"><legend>输出方式</legend>
+                  <label><input id="output-linked" name="workspace-output" type="radio" checked />在原工作簿新增结果页 <small>保留原工作表，并新增结果、数据透视和处理说明</small></label>
+                  <label><input id="output-standalone" name="workspace-output" type="radio" />生成新结果文件 <small>生成可直接使用的 Excel 和 CSV 文件</small></label>
+                </fieldset>
+                <input id="workspace-name" type="hidden" />
+                <div id="workspace-resolution" class="workspace-resolution" hidden></div>
+                <button id="run-workspace-button" type="button" class="primary-button one-click-button">一键生成结果</button>
+              </section>
+            </div>
+
+            <details class="advanced-workspace">
+              <summary>高级设置与处理明细</summary>
+            <div class="workspace-step-tabs" role="tablist" aria-label="数据处理步骤">
+              <button type="button" class="workspace-step-tab is-active" data-workspace-step="source">1 数据与字段</button>
+              <button type="button" class="workspace-step-tab" data-workspace-step="plan">2 处理计划</button>
+              <button type="button" class="workspace-step-tab" data-workspace-step="preview">3 前后预览</button>
+              <button type="button" class="workspace-step-tab" data-workspace-step="export">4 执行与导出</button>
+            </div>
+
+            <div class="workspace-step-content" data-workspace-content="source">
+              <div class="field-grid">
+                <div><label>任务名称</label><input id="workspace-name-advanced" type="text" placeholder="自动取自文件名" /></div>
+                <div><p class="hint">文件请在上方一键处理区选择。</p></div>
+              </div>
+              <div class="button-row"><button id="create-workspace-button" type="button" class="primary-button">建立数据任务</button><button id="upload-workspace-files-button" type="button" disabled>上传所选文件</button></div>
+              <div id="workspace-table-list" class="workspace-table-list"></div>
+            </div>
+
+            <div class="workspace-step-content" data-workspace-content="plan" hidden>
+              <div class="field-grid">
+                <label for="workspace-source-tables">参与处理的数据表<select id="workspace-source-tables" multiple size="5"></select></label>
+                <label for="workspace-combine-mode">多表起始方式<select id="workspace-combine-mode"><option value="first">以第一张表为主</option><option value="concat">纵向合并所选表</option></select></label>
+              </div>
+              <div class="button-row"><button id="suggest-workspace-plan-button" type="button">根据自然语言生成保守建议</button></div>
+              <div class="operation-builder">
+                <div class="field-grid">
+                  <label for="operation-type">新增处理步骤<select id="operation-type">
+                    <option value="trim">清理首尾空格</option><option value="normalize_empty">统一空值</option><option value="drop_duplicates">删除重复行</option>
+                    <option value="select_columns">选择字段</option><option value="rename_columns">重命名字段</option><option value="reorder_columns">调整字段顺序</option>
+                    <option value="convert_type">转换字段类型</option><option value="filter">条件筛选</option><option value="sort">排序</option>
+                    <option value="split_column">拆分字段</option><option value="merge_columns">合并字段</option><option value="calculate">计算列</option>
+                    <option value="group">分组汇总</option><option value="join">关联另一张表</option>
+                  </select></label>
+                  <div id="operation-fields" class="operation-fields"></div>
+                </div>
+                <button id="add-operation-button" type="button">加入处理计划</button>
+              </div>
+              <div id="operation-list" class="operation-list"></div>
+              <div class="button-row"><button id="save-workspace-plan-button" type="button" class="primary-button">保存处理计划</button></div>
+            </div>
+
+            <div class="workspace-step-content" data-workspace-content="preview" hidden>
+              <div class="button-row"><button id="preview-workspace-button" type="button" class="primary-button">生成处理前后预览</button></div>
+              <div id="workspace-preview-summary" class="preview-summary"></div>
+              <div class="preview-panes"><div><h3>处理前</h3><div id="workspace-preview-before" class="table-scroll"></div></div><div><h3>处理后</h3><div id="workspace-preview-after" class="table-scroll"></div></div></div>
+              <div id="workspace-preview-audit" class="preview-audit"></div>
+            </div>
+
+            <div class="workspace-step-content" data-workspace-content="export" hidden>
+              <div class="execution-confirmation"><strong>最后确认</strong><p>只有当前预览仍有效时才能执行。执行会生成派生结果，不覆盖任何原始文件。</p></div>
+              <div class="button-row"><button id="execute-workspace-button" type="button" class="primary-button" disabled>确认并执行当前预览</button></div>
+              <div id="workspace-execution-summary" class="preview-summary"></div>
+            </div>
+            </details>
+            <div id="workspace-message" class="form-message" role="status" aria-live="polite"></div>
+          </section>
+        </div>
+
+        <section id="results-view" class="app-view" data-app-view hidden>
+          <div class="page-heading"><div><h1>我的结果</h1><p>查询、下载或管理已经生成的数据结果。</p></div></div>
+          <div class="panel results-panel">
+            <div id="workspace-history-anchor" class="workspace-task-bar">
+              <label for="workspace-selector">选择数据任务<select id="workspace-selector"><option value="">新建数据任务</option></select></label>
+              <div class="workspace-status"><small>当前状态</small><strong id="workspace-status">尚未创建</strong><button id="delete-workspace-button" type="button" hidden>删除任务</button></div>
+            </div>
+            <div id="workspace-one-click-result" class="workspace-one-click-result" hidden>
+              <div><small>处理结果</small><strong id="one-click-result-summary">结果待生成</strong></div>
+              <div class="button-row"><a id="download-workspace-linked" class="download-button" href="#" hidden>下载关联原表 Excel</a><a id="download-workspace-csv" class="download-button" href="#" hidden>下载 CSV</a><a id="download-workspace-xlsx" class="download-button" href="#" hidden>下载结果 Excel</a></div>
+            </div>
+            <div id="workspace-result-empty" class="result-empty"><strong>还没有可下载的结果</strong><p>从“开始处理”上传文件并生成后，结果会保存在这里。</p></div>
+          </div>
+        </section>
+
+        <section id="collaboration-record-panel" class="panel collaboration-record-panel app-view" data-app-view data-nav-section hidden>
+          <div class="step-heading">
+            <span>◎</span>
+            <div><h2>GPT / Codex 任务留痕</h2><p>显示本项目真实执行记录，可查询、查看、处理和从本页面删除。</p></div>
+            <button id="collaboration-panel-toggle" class="section-toggle" type="button" data-section-toggle aria-expanded="true" aria-controls="collaboration-panel-content">收起功能区</button>
+          </div>
+          <div id="collaboration-panel-content" class="section-content">
+            <div class="record-toolbar">
+              <label for="collaboration-search">查询记录<input id="collaboration-search" type="search" placeholder="输入 Prompt、任务名称或结果关键词" /></label>
+              <label for="collaboration-status-filter">处理状态<select id="collaboration-status-filter"><option value="all">全部</option><option value="pending">待处理</option><option value="processing">处理中</option><option value="done">已处理</option></select></label>
+            </div>
+            <div id="collaboration-record-list" class="collaboration-record-list" aria-live="polite"></div>
+            <div id="collaboration-record-message" class="form-message" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="history-panel" class="panel history-panel" hidden>
+          <div class="step-heading"><span>↺</span><div><h2>分析草案记录</h2><p>按当前项目保存，可选择查看或继续编辑未确认记录。</p></div></div>
+          <div id="history-list" class="history-list"></div>
+          <div id="history-message" class="form-message" role="status" aria-live="polite"></div>
+        </section>
+
+        <form id="goal-form" class="workspace single-column" hidden>
+          <section id="goal-panel" class="panel" data-nav-section>
+            <div class="step-heading"><span>01</span><div><h2>输入分析目标</h2><p>无需预先选择报表或了解字段结构。</p></div></div>
+            <label for="goal">自然语言分析目标 <b>*</b></label>
+            <textarea id="goal" name="goal" required placeholder="例如：分析本季度各渠道利润变化，识别成本异常并比较区域差异。"></textarea>
+            <p class="hint">请勿填写密码、密钥或个人敏感信息。</p>
+            <button type="submit" class="primary-button">生成结构化草案</button>
+          </section>
+          <div id="form-message" class="form-message" role="status" aria-live="polite"></div>
+        </form>
+
+        <form id="draft-form" class="workspace single-column" hidden>
+          <section id="draft-panel" class="panel" data-nav-section>
+            <div class="step-heading"><span>02</span><div><h2>编辑结构化需求草案</h2><p>确认前可以修正所有字段；每行代表一项。</p></div></div>
+            <label for="target-restatement">目标重述 <b>*</b></label>
+            <textarea id="target-restatement" required></textarea>
+            <div class="field-grid">
+              <div><label for="metrics">指标 <b>*</b></label><textarea id="metrics" class="compact" required></textarea></div>
+              <div><label for="dimensions">维度 <b>*</b></label><textarea id="dimensions" class="compact" required></textarea></div>
+            </div>
+            <label for="scope">范围 <b>*</b></label>
+            <textarea id="scope" class="compact" required></textarea>
+            <label for="required-data">所需数据及原因 <b>*</b></label>
+            <textarea id="required-data" required placeholder="每行格式：数据名称 | 需要原因"></textarea>
+            <label for="questions">最少必要澄清问题 <small>没有可留空</small></label>
+            <textarea id="questions" class="compact"></textarea>
+          </section>
+
+          <aside id="confirmation-panel" class="summary" data-nav-section>
+            <div><span class="summary-label">确认状态</span><strong id="draft-status">draft · 后续流程已阻断</strong></div>
+            <div class="summary-actions">
+              <button id="save-draft-button" type="button">保存草案</button>
+              <button id="confirm-button" type="submit">明确确认 <span>→</span></button>
+            </div>
+          </aside>
+          <div id="draft-message" class="form-message" role="status" aria-live="polite"></div>
+        </form>
+
+        <form id="data-preparation-form" class="workspace single-column" hidden>
+          <section id="data-preparation-panel" class="panel data-preparation-panel" data-nav-section>
+            <div class="step-heading"><span>04</span><div><h2>数据准备</h2><p>提供数据后，系统将依次完成理解、清洗与异常识别、分析准备。</p></div></div>
+            <div class="preparation-summary">
+              <div><small>已确认的分析目标</small><strong id="confirmed-target"></strong></div>
+              <div><small>所需数据</small><ul id="confirmed-required-data"></ul></div>
+            </div>
+            <fieldset>
+              <legend>选择数据提供方式</legend>
+              <div class="option-grid data-entry-grid">
+                <label class="option-card"><input type="radio" name="import-method" value="file" checked /><span class="option-content"><strong>上传数据</strong><small>上传 Excel、CSV、TSV 或 JSON 文件。</small></span></label>
+                <label class="option-card"><input type="radio" name="import-method" value="connector" /><span class="option-content"><strong>连接业务系统</strong><small>使用业务系统导出的安全数据快照，不填写账号或密钥。</small></span></label>
+                <label class="option-card"><input type="radio" name="import-method" value="path" /><span class="option-content"><strong>使用已有数据</strong><small>选择当前项目目录内已有的数据文件。</small></span></label>
+              </div>
+            </fieldset>
+            <div id="path-import-panel" hidden><label for="data-path">项目内已有数据路径</label><input id="data-path" type="text" placeholder="例如：data/sample.csv" /></div>
+            <div id="connector-import-panel" hidden>
+              <label for="system-name">业务系统名称</label><input id="system-name" type="text" placeholder="例如：CRM、ERP（请勿填写账号或密钥）" />
+              <p class="hint">当前安全模式不直连生产数据库；请同时提供该系统导出的数据快照。</p>
+            </div>
+            <div id="file-import-panel">
+              <label for="data-file">拖入或选择文件</label>
+              <div id="file-drop-zone" class="file-drop-zone" tabindex="0">拖入 Excel、CSV、TSV 或 JSON 文件，或点击选择<input id="data-file" type="file" accept=".xlsx,.csv,.tsv,.json" /></div>
+              <p id="selected-file" class="hint">尚未选择文件</p>
+            </div>
+            <button id="import-data-button" type="submit" class="primary-button">开始 AI 理解与数据处理</button>
+            <div id="data-preparation-message" class="form-message" role="status" aria-live="polite"></div>
+          </section>
+        </form>
+
+        <section id="result-panel" class="panel result-panel" data-nav-section hidden>
+          <div class="step-heading"><span>05</span><div><h2>数据处理与分析准备结果</h2><p>展示数据结构、字段含义、清洗异常和已确认目标的计算准备状态。</p></div></div>
+          <div id="analysis-result" class="analysis-result"></div>
+          <label for="review-feedback">调整意见 <small>确认验收时可留空</small></label>
+          <textarea id="review-feedback" class="compact" placeholder="如需调整，请说明调整内容。"></textarea>
+          <div class="review-actions"><button id="request-adjustment-button" type="button">提出调整</button><button id="accept-result-button" type="button" class="primary-button">确认验收</button></div>
+          <div id="review-message" class="form-message" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <footer>AI 数据工作台</footer>
+    <script src="/app.js?v=20260809-1" defer></script>
+  </body>
+</html>

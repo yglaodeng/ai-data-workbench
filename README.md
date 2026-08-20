@@ -2,7 +2,18 @@
 
 用自然语言描述目标，经过人工确认后处理 Excel、CSV、TSV 或 JSON，并输出可追溯的派生结果。
 
+**English:** A local-first AI data workbench for natural-language goals, multi-file analysis, approval gates, traceable transformations, and derived Excel/CSV outputs. Original files remain read-only.
+
+[查看源码](https://github.com/yglaodeng/ai-data-workbench) · [提交问题或建议](https://github.com/yglaodeng/ai-data-workbench/issues)
+
 ![AI 数据工作台](./docs/workbench.jpg)
+
+## 30 秒了解项目
+
+- **输入：** 最多 5 个 Excel、CSV、TSV 或 JSON 文件，可包含多个工作表
+- **过程：** 用自然语言说明目标，预览处理计划和影响范围，再由人工确认执行
+- **输出：** 生成可追溯的派生文件，不覆盖原始文件
+- **当前状态：** 可在本地运行的原型，不连接生产账号、密钥或数据库
 
 ## 当前能力
 

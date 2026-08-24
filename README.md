@@ -4,7 +4,7 @@
 
 **English:** A local-first AI data workbench for natural-language goals, multi-file analysis, approval gates, traceable transformations, and derived Excel/CSV outputs. Original files remain read-only.
 
-[查看源码](https://github.com/yglaodeng/ai-data-workbench) · [提交问题或建议](https://github.com/yglaodeng/ai-data-workbench/issues)
+[English documentation](./README.en.md) · [查看源码](https://github.com/yglaodeng/ai-data-workbench) · [提交问题或建议](https://github.com/yglaodeng/ai-data-workbench/issues)
 
 ![AI 数据工作台](./docs/workbench.jpg)
 
@@ -51,4 +51,4 @@ python3 -m venv .venv
 
 ## 许可
 
-当前仓库用于公开展示和学习参考，暂未附加开源许可证。
+本项目采用 [MIT License](./LICENSE)。参与前请阅读 [贡献指南](./CONTRIBUTING.md)，计划中的工作见 [Roadmap](./ROADMAP.md)。

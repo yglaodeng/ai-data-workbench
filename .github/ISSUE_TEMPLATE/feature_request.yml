@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest a traceable local data-workbench improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Data task
+      description: Describe the input, desired transformation, and output.
+    validations:
+      required: true
+  - type: textarea
+    id: traceability
+    attributes:
+      label: Approval and traceability expectations
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Source-data protection boundary
+    validations:
+      required: true
